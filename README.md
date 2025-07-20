@@ -461,3 +461,142 @@ The setup automatically runs `npm audit fix` to:
 - Update packages to secure versions
 - Ensure production-ready deployment
 
+
+## 🔐 API Security & Authentication
+
+### Authentication Overview
+
+The API supports optional API key authentication for enhanced security. When enabled, it protects your notification endpoints from unauthorized access.
+
+### Quick Setup
+
+#### 1. Enable Authentication
+```bash
+# Add to server/.env
+API_KEY=your-secure-api-key-here
+```
+
+#### 2. Generate Secure API Key
+```bash
+# Using OpenSSL
+openssl rand -base64 32
+
+# Using Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+# Example result: 
+# sk_live_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+```
+
+### Authentication Methods
+
+The API supports multiple authentication methods:
+
+#### Method 1: X-API-Key Header (Recommended)
+```bash
+curl -X POST "http://your-server:3000/" \
+     -H "Content-Type: application/json" \
+     -H "X-API-Key: your-secure-api-key-here" \
+     -d '{"title": "Test Notification", "message": "Hello World!"}'
+```
+
+#### Method 2: Authorization Bearer Header
+```bash
+curl -X POST "http://your-server:3000/" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer your-secure-api-key-here" \
+     -d '{"title": "Test Notification", "message": "Hello World!"}'
+```
+
+#### Method 3: Query Parameter
+```bash
+curl -X POST "http://your-server:3000/?api_key=your-secure-api-key-here" \
+     -H "Content-Type: application/json" \
+     -d '{"title": "Test Notification", "message": "Hello World!"}'
+```
+
+### Protected vs Public Endpoints
+
+#### 🔒 Protected Endpoints (Require Authentication)
+- `POST /` - Create notification
+- `GET /` - Get all notifications
+- `GET /latest` - Get latest notification
+
+#### 🌐 Public Endpoints (No Authentication Required)
+- `GET /health` - Health check and server status
+- `GET /events` - Server-Sent Events (SSE) connection*
+
+*The `/events` endpoint supports optional authentication. If no API key is provided, access is allowed but logged with warnings.
+
+### Android App Configuration
+
+To use authentication with your Android app, include the API key in your requests:
+
+#### Option 1: Header Authentication
+```java
+// In your Android app HTTP connection
+connection.setRequestProperty("X-API-Key", "your-secure-api-key-here");
+```
+
+#### Option 2: Query Parameter
+```java
+// Append to your SSE connection URL
+String url = "http://your-server:3000/events?api_key=your-secure-api-key-here";
+```
+
+### Security Status Check
+
+Check if authentication is enabled:
+```bash
+curl http://your-server:3000/health
+```
+
+Response includes authentication status:
+```json
+{
+  "status": "healthy",
+  "authentication": "enabled",
+  "activeConnections": 0,
+  "totalNotifications": 0
+}
+```
+
+### Error Handling
+
+#### Missing API Key (HTTP 401)
+```json
+{
+  "error": "Authentication required",
+  "message": "API key must be provided via X-API-Key header, Authorization: Bearer header, or api_key query parameter"
+}
+```
+
+#### Invalid API Key (HTTP 401)
+```json
+{
+  "error": "Authentication failed",
+  "message": "Invalid API key provided"
+}
+```
+
+### 📖 Complete Security Documentation
+
+For detailed security documentation, see:
+- **[`server/API_SECURITY.md`](server/API_SECURITY.md)** - Complete authentication guide
+- Security best practices
+- Production deployment recommendations
+- Android app integration examples
+
+### 🔧 Disabling Authentication
+
+To run without authentication (NOT recommended for production):
+```bash
+# Comment out or remove API_KEY from server/.env
+# API_KEY=your-secure-api-key-here
+```
+
+Server will show warning:
+```
+⚠️  WARNING: API Key authentication is DISABLED - set API_KEY environment variable
+```
+
