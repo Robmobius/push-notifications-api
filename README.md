@@ -14,6 +14,67 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+
+## Complete System Setup
+
+### Automated Setup (Recommended)
+
+The repository includes setup scripts for easy installation:
+
+```bash
+# Clone the repository
+git clone https://github.com/Robmobius/push-notifications-api.git
+cd push-notifications-api
+
+# Run the complete setup script
+chmod +x setup.sh
+./setup.sh
+```
+
+This script will:
+- Install build-essential package
+- Create a 2GB swap file (important for low-memory systems)
+- Install Node.js dependencies
+- Run security audit fixes
+
+### Server-Only Setup
+
+If you only need to set up the server environment:
+
+```bash
+cd push-notifications-api/server
+chmod +x setup-server.sh
+./setup-server.sh
+```
+
+### Manual Setup Steps
+
+If you prefer manual setup, follow these steps:
+
+#### 1. Install System Dependencies
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+#### 2. Setup Swap File (Recommended for low-memory systems)
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+#### 3. Install Node.js Dependencies
+```bash
+cd server
+npm install
+npm audit fix
+```
+
+### System Requirements Details
+
 ### Why build-essential is needed
 The `build-essential` package provides:
 - GCC compiler
@@ -220,6 +281,67 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+
+## Complete System Setup
+
+### Automated Setup (Recommended)
+
+The repository includes setup scripts for easy installation:
+
+```bash
+# Clone the repository
+git clone https://github.com/Robmobius/push-notifications-api.git
+cd push-notifications-api
+
+# Run the complete setup script
+chmod +x setup.sh
+./setup.sh
+```
+
+This script will:
+- Install build-essential package
+- Create a 2GB swap file (important for low-memory systems)
+- Install Node.js dependencies
+- Run security audit fixes
+
+### Server-Only Setup
+
+If you only need to set up the server environment:
+
+```bash
+cd push-notifications-api/server
+chmod +x setup-server.sh
+./setup-server.sh
+```
+
+### Manual Setup Steps
+
+If you prefer manual setup, follow these steps:
+
+#### 1. Install System Dependencies
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+#### 2. Setup Swap File (Recommended for low-memory systems)
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+#### 3. Install Node.js Dependencies
+```bash
+cd server
+npm install
+npm audit fix
+```
+
+### System Requirements Details
+
 ### Why build-essential is needed
 The `build-essential` package provides:
 - GCC compiler
@@ -265,3 +387,38 @@ The improvements are transparent to the Android app:
 - **Better Resource Management:** Automatic cleanup of dead connections
 - **Improved Logging:** Better debugging and monitoring capabilities
 - **Graceful Shutdown:** Proper resource cleanup on server termination
+
+## ⚠️ Memory Requirements and Troubleshooting
+
+### Why Swap File is Important
+
+Node.js applications can be memory-intensive, especially during:
+- npm package installation
+- TypeScript compilation
+- Running with multiple connections
+
+**Without adequate memory, you may encounter:**
+- `FATAL ERROR: Ineffective mark-compacts near heap limit`
+- npm install failures
+- Server crashes under load
+
+### Swap File Benefits
+- **Prevents out-of-memory errors** during installation
+- **Improves stability** under high load
+- **Essential for VPS with limited RAM** (1GB or less)
+
+### Verify Swap is Active
+```bash
+# Check current swap usage
+swapon --show
+
+# Check memory and swap status
+free -h
+```
+
+### Security Audit
+The setup automatically runs `npm audit fix` to:
+- Fix known security vulnerabilities
+- Update packages to secure versions
+- Ensure production-ready deployment
+
