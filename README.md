@@ -537,6 +537,97 @@ free -h
 The setup automatically runs `npm audit fix` to:
 - Fix known security vulnerabilities
 - Update packages to secure versions
+## 🎯 Production Deployment (systemd Service)
+
+For production environments, you can run the Push Notifications API as a systemd service to ensure automatic startup, restart on failure, and proper system integration.
+
+### Quick Service Installation
+
+```bash
+# Run the automated installation script
+sudo ./systemd/install-service.sh
+```
+
+### Manual Service Installation
+
+If you prefer manual installation:
+
+1. **Copy the service file:**
+   ```bash
+   sudo cp systemd/push-notifications.service /etc/systemd/system/
+   ```
+
+2. **Edit paths in the service file (if needed):**
+   ```bash
+   sudo nano /etc/systemd/system/push-notifications.service
+   # Update WorkingDirectory, ExecStart paths as needed
+   ```
+
+3. **Enable and start the service:**
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable push-notifications.service
+   sudo systemctl start push-notifications.service
+   ```
+
+### Service Management
+
+```bash
+# Check service status
+sudo systemctl status push-notifications
+
+# Start the service
+sudo systemctl start push-notifications
+
+# Stop the service
+sudo systemctl stop push-notifications
+
+# Restart the service
+sudo systemctl restart push-notifications
+
+# View logs
+sudo journalctl -u push-notifications -f
+
+# View log files
+sudo tail -f /var/log/push-notifications.log
+sudo tail -f /var/log/push-notifications-error.log
+```
+
+### Service Features
+
+- **Auto-restart:** Service automatically restarts if it crashes
+- **Boot startup:** Service starts automatically on system boot
+- **Log management:** Separate log files for output and errors
+- **Security:** Runs with restricted permissions
+- **Monitoring:** Easy status monitoring with systemctl
+
+### Troubleshooting
+
+If the service fails to start:
+
+1. **Check service status:**
+   ```bash
+   sudo systemctl status push-notifications --no-pager
+   ```
+
+2. **Check logs:**
+   ```bash
+   sudo journalctl -u push-notifications --no-pager -n 50
+   ```
+
+3. **Verify Node.js and npm paths:**
+   ```bash
+   which node
+   which npm
+   ```
+
+4. **Test manual startup:**
+   ```bash
+   cd server && npm start
+   ```
+
+---
+
 - Ensure production-ready deployment
 
 

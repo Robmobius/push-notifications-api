@@ -1,0 +1,29 @@
+[Unit]
+Description=Push Notifications API Server
+Documentation=https://github.com/user/push-notifications-api
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/push-notifications-api/server
+Environment=NODE_ENV=production
+Environment=PATH=/root/.nvm/versions/node/v22.17.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/root/.nvm/versions/node/v22.17.1/bin/npm start
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/push-notifications.log
+StandardError=append:/var/log/push-notifications-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/root/push-notifications-api
+ReadWritePaths=/var/log
+ReadWritePaths=/tmp
+
+[Install]
+WantedBy=multi-user.target
