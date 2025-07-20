@@ -10,66 +10,6 @@
 <b>Push Notifications API</b>
 </p>
 
-# About
-
-Push Notifications API is a simple Android app for displaying notifications on your phone through a REST-API. Using a Node server with server sent events.
-
-It is a tool for developers that need a easy way to post notifications to their phone. The application requires an API to handle all the notifications. There is a working example of a Node server in the [server](https://github.com/viktorholk/push-notifications-api/tree/main/server) folder that works with the Android app.
-
-The application is great for IoT (Internet of Things). You could for example post a notification to your phone every time your garden needs watering when a sensor has detected the level of soil moisture to be low. The possibilites are up to you!
-
-
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/7f6e2fc4-acb6-4f8d-b369-b91be488fbb2" alt="animated" />
-</p>
-
-# Installation
-## Android App
-You can download the Android app through [Google Play](https://play.google.com/store/apps/details?id=com.viktorholk.apipushnotifications) or download the latest apk from the [releases](https://github.com/viktorholk/push-notifications-api/releases).
-
-### Connect
-
-In the configuration tab type in the `/events` endpoint on your server
-
-You can find the IP-address in the server log
-
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/32514246-545b-486e-9940-19d80c970aa2" alt="animated" />
-</p>
-
-
-## 🚀 Quick Start
-
-**Install and run in one command:**
-
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/Robmobius/push-notifications-api/main/quick-install.sh)
-```
-
-Then start the server:
-```bash
-cd push-notifications-api/server && npm start
-```
-
-Connect your Android app to: `http://your-server-ip:3000/events`
-
----
-
-
-Push Notifications API is a simple Android app for displaying notifications on your phone through a REST-API. Using a Node server with server sent events.
-
-It is a tool for developers that need a easy way to post notifications to their phone. The application requires an API to handle all the notifications. There is a working example of a Node server in the [server](https://github.com/viktorholk/push-notifications-api/tree/main/server) folder that works with the Android app.
-
-The application is great for IoT (Internet of Things). You could for example post a notification to your phone every time your garden needs watering when a sensor has detected the level of soil moisture to be low. The possibilites are up to you!
-
-
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/7f6e2fc4-acb6-4f8d-b369-b91be488fbb2" alt="animated" />
-</p>
-
 # Installation
 
 ## ⚡ Quick Installation (One Command)
