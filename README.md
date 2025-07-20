@@ -393,7 +393,7 @@ These are required for compiling native Node.js addons that some dependencies ma
 #### Server Logs
 The server now provides detailed logging:
 ```
-[20/7/2025 18:26:41] INFO Server is running on http://206.189.5.95:3000
+[20/7/2025 18:26:41] INFO Server is running on http://127.0.0.1:3000
 [20/7/2025 18:26:41] INFO Heartbeat interval: 30000ms
 [20/7/2025 18:27:11] INFO Sent keep-alive to 192.168.1.100
 [20/7/2025 18:27:11] INFO Active connections: 2
