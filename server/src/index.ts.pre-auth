@@ -8,9 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import Logger from "@/utils/logger";
 import LoggerMiddleware from "@/middleware/logger";
-import authMiddleware, { optionalAuthMiddleware } from "@/middleware/auth";
 import { ClientContext, PushNotification } from '@/types';
 import { loadIcon, sendNotifications } from '@/utils';
+
 
 let notifications: PushNotification[] = [];
 let clients: ClientContext[] = [];
@@ -59,7 +59,7 @@ function connectClient(req: Request, res: Response) {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Cache-Control, X-API-Key, API-Key, Authorization");
+    res.setHeader("Access-Control-Allow-Headers", "Cache-Control");
     
     // Set socket timeout to prevent premature closing (5 minutes)
     req.socket.setTimeout(300000);
@@ -70,11 +70,11 @@ function connectClient(req: Request, res: Response) {
     // Set keep-alive on the socket level
     req.socket.setKeepAlive(true, 30000);
 
-    Logger.info(`${req.socket?.remoteAddress} connected with authentication`);
+    Logger.info(`${req.socket?.remoteAddress} connected`);
     clients.push({ req, res });
 
     // Send initial connection confirmation
-    res.write("data: {\"type\":\"connected\",\"message\":\"Connected to push notifications (authenticated)\"}\n\n");
+    res.write("data: {\"type\":\"connected\",\"message\":\"Connected to push notifications\"}\n\n");
     
     // Send a keep-alive comment immediately
     res.write(": connected\n\n");
@@ -100,10 +100,7 @@ function createNotification(req: Request, res: Response) {
     const { title, message, url, icon, color } = req.body;
 
     if (!title || title.trim() === "") {
-        return res.status(400).json({
-            error: 'Validation failed',
-            message: "'title' field is required"
-        });
+        return res.status(400).send("'title' field is required");
     }
 
     const notification: PushNotification = {
@@ -124,7 +121,6 @@ function createNotification(req: Request, res: Response) {
     }
 
     notifications.push(notification);
-    Logger.info(`New notification created: ${title} (ID: ${notification.id})`);
 
     // Clean up dead connections before sending
     cleanupDeadConnections();
@@ -135,50 +131,31 @@ function createNotification(req: Request, res: Response) {
     // Clean up again after sending
     cleanupDeadConnections();
 
-    res.sendResponse(201, {
-        success: true,
-        message: 'Notification sent successfully',
-        notification: {
-            id: notification.id,
-            title: notification.title,
-            createdAt: notification.createdAt
-        }
-    });
+    res.sendResponse(201);
 }
 
 function getAllNotifications(_req: Request, res: Response) {
-    res.sendResponse(200, {
-        success: true,
-        count: notifications.length,
-        notifications
-    });
+    res.sendResponse(200, notifications);
 }
 
 function getLatestNotification(_req: Request, res: Response) {
     const latestNotification = notifications.length ? notifications[notifications.length - 1] : null;
 
     if (!latestNotification) {
-        return res.sendResponse(404, {
-            success: false,
-            message: 'No notifications found'
-        });
+        return res.sendResponse(404);
     }
 
-    res.sendResponse(200, {
-        success: true,
-        notification: latestNotification
-    });
+    res.sendResponse(200, latestNotification);
 }
 
-// Health check endpoint - no authentication required
+// Health check endpoint
 function healthCheck(_req: Request, res: Response) {
     res.sendResponse(200, {
         status: 'healthy',
         uptime: process.uptime(),
         activeConnections: clients.length,
         totalNotifications: notifications.length,
-        timestamp: new Date().toISOString(),
-        authentication: process.env.API_KEY ? 'enabled' : 'disabled'
+        timestamp: new Date().toISOString()
     });
 }
 
@@ -187,26 +164,16 @@ async function main() {
 
     const host = process.env.HOST || "0.0.0.0";
     const port = parseInt(process.env.PORT || "3000", 10);
-    const apiKey = process.env.API_KEY;
 
-    app.use(cors({
-        origin: '*',
-        allowedHeaders: ['Content-Type', 'X-API-Key', 'API-Key', 'Authorization', 'Cache-Control'],
-        methods: ['GET', 'POST', 'OPTIONS']
-    }));
+    app.use(cors());
     app.use(express.json());
     app.use(LoggerMiddleware);
 
-    // Public endpoints (no authentication required)
+    app.post("/", createNotification);
+    app.get("/", getAllNotifications);
+    app.get("/latest", getLatestNotification);
+    app.get("/events", connectClient);
     app.get("/health", healthCheck);
-
-    // Protected endpoints (require authentication)
-    app.post("/", authMiddleware, createNotification);
-    app.get("/", authMiddleware, getAllNotifications);
-    app.get("/latest", authMiddleware, getLatestNotification);
-    
-    // Events endpoint with optional authentication (for SSE connections)
-    app.get("/events", optionalAuthMiddleware, connectClient);
 
     // Start the heartbeat mechanism
     startHeartbeat();
@@ -227,13 +194,6 @@ async function main() {
     app.listen(port, host, () => {
         Logger.info(`Server is running on http://${host === "0.0.0.0" ? ip.address() : host}:${port}`);
         Logger.info(`Heartbeat interval: ${HEARTBEAT_INTERVAL}ms`);
-        
-        if (apiKey) {
-            Logger.info('🔒 API Key authentication is ENABLED');
-            Logger.info('Use X-API-Key, Authorization: Bearer, or api_key query parameter');
-        } else {
-            Logger.error('⚠️  WARNING: API Key authentication is DISABLED - set API_KEY environment variable');
-        }
     });
 }
 
