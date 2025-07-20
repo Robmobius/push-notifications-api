@@ -27,6 +27,24 @@ chmod +x setup.sh
 
 # About
 
+## 🚀 Quick Start
+
+**Install and run in one command:**
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/Robmobius/push-notifications-api/main/quick-install.sh)
+```
+
+Then start the server:
+```bash
+cd push-notifications-api/server && npm start
+```
+
+Connect your Android app to: `http://your-server-ip:3000/events`
+
+---
+
+
 Push Notifications API is a simple Android app for displaying notifications on your phone through a REST-API. Using a Node server with server sent events.
 
 It is a tool for developers that need a easy way to post notifications to their phone. The application requires an API to handle all the notifications. There is a working example of a Node server in the [server](https://github.com/viktorholk/push-notifications-api/tree/main/server) folder that works with the Android app.
@@ -40,6 +58,66 @@ The application is great for IoT (Internet of Things). You could for example pos
 </p>
 
 # Installation
+
+## ⚡ Quick Installation (One Command)
+
+Install everything in one command:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/Robmobius/push-notifications-api/main/quick-install.sh)
+```
+
+This single command will:
+- ✅ Install system dependencies (build-essential)
+- ✅ Create 2GB swap file for memory management
+- ✅ Install Node.js (if not present)
+- ✅ Clone the repository
+- ✅ Install all Node.js dependencies
+- ✅ Run security audit fixes
+- ✅ Generate sample API key
+- ✅ Create .env configuration file
+- ✅ Display next steps
+
+**Perfect for VPS deployment!**
+
+### Alternative: Local Setup Script
+
+If you prefer to download and inspect the script first:
+
+```bash
+# Download the script
+wget https://raw.githubusercontent.com/Robmobius/push-notifications-api/main/quick-install.sh
+
+# Make it executable
+chmod +x quick-install.sh
+
+# Run it
+./quick-install.sh
+```
+
+### What the Script Does
+
+1. **System Setup**
+   - Updates package lists
+   - Installs build-essential for native compilation
+   - Creates 2GB swap file for memory management
+
+2. **Node.js Setup**
+   - Installs Node.js LTS if not present
+   - Verifies Node.js installation
+
+3. **Application Setup**
+   - Clones the repository from GitHub
+   - Installs all Node.js dependencies
+   - Runs `npm audit fix` for security
+
+4. **Configuration**
+   - Generates secure API key
+   - Creates .env file with sample configuration
+   - Displays connection information
+
+**Ready to use in under 5 minutes!**
+
 ## Android App
 You can download the Android app through [Google Play](https://play.google.com/store/apps/details?id=com.viktorholk.apipushnotifications) or download the latest apk from the [releases](https://github.com/viktorholk/push-notifications-api/releases).
 
